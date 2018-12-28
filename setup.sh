@@ -26,7 +26,7 @@ function pre() {
     sudo apt-get update
 
     read -rp "Please specify packages to be installed (ex: 'package1 package2'). Leave blank for none:" install_packages
-    sudo apt install -y "${required_packages} ${install_packages}"
+    sudo apt install -y "${required_packages}" "${install_packages}"
 
     installPresto
     updateSkel
