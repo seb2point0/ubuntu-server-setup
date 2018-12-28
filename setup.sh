@@ -42,13 +42,15 @@ function main() {
     addUserAccount "${username}" "${password}"
 
     read -rp $'Paste in the public SSH key for the new user:\n' sshKey
+    read -rp $'Enter the port for the SSH server (Default is 22):\n' sshPort
+
     echo 'Running setup script...'
     logTimestamp "${output_file}"
 
     exec 3>&1 >>"${output_file}" 2>&1
     disableSudoPassword "${username}"
     addSSHKey "${username}" "${sshKey}"
-    changeSSHConfig "${username}"
+    changeSSHConfig "${username}" "${sshPort}"
     setupUfw
 
     if ! hasSwap; then

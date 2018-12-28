@@ -48,6 +48,11 @@ function execAsUser() {
 # shellcheck disable=2116
 function changeSSHConfig() {
     local username=${1}
+    local sshPort=${2}
+
+    if [ "${sshPort}" ]; then
+        sed -i "s/Port 22/Port $sshPort/" /etc/ssh/sshd_config
+    fi
 
     sudo sed -re 's/^(\#?)(PasswordAuthentication)([[:space:]]+)yes/\2\3no/' -i."$(echo 'old')" /etc/ssh/sshd_config
     sudo sed -re 's/^(\#?)(PermitRootLogin)([[:space:]]+)(.*)/PermitRootLogin no/' -i /etc/ssh/sshd_config
@@ -156,12 +161,13 @@ function revertSudoers() {
 function installPresto () {
     # Install presto
     cd /root
-    git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
-    zsh
-    setopt EXTENDED_GLOB
-    for rcfile in .zprezto/runcoms/^README.md\(.N\); do
-        ln -s "$rcfile" ".${rcfile:t}"
-    done
+    git clone --recursive https://github.com/sorin-ionescu/prezto.git "$HOME/.zprezto"
+    ln -s .zprezto/runcoms/zlogin "$HOME/.zlogin"
+    ln -s .zprezto/runcoms/zlogout "$HOME/.zlogout"
+    ln -s .zprezto/runcoms/zpreztorc "$HOME/.zpreztorc"
+    ln -s .zprezto/runcoms/zprofile "$HOME/.zprofile"
+    ln -s .zprezto/runcoms/zshenv "$HOME/.zshenv"
+    ln -s .zprezto/runcoms/zshrc "$HOME/.zshrc"
     chsh -s /bin/zsh
 }
 # Copy zsh config files to /etc/skel and update default shell
