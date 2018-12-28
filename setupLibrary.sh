@@ -159,7 +159,7 @@ function installPresto () {
     git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
     zsh
     setopt EXTENDED_GLOB
-    for rcfile in .zprezto/runcoms/^README.md(.N); do
+    for rcfile in .zprezto/runcoms/^README.md\(.N\); do
         ln -s "$rcfile" ".${rcfile:t}"
     done
     chsh -s /bin/zsh
