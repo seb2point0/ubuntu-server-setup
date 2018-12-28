@@ -47,8 +47,14 @@ function execAsUser() {
 # Modify the sshd_config file
 # shellcheck disable=2116
 function changeSSHConfig() {
+    local username=${1}
+
     sudo sed -re 's/^(\#?)(PasswordAuthentication)([[:space:]]+)yes/\2\3no/' -i."$(echo 'old')" /etc/ssh/sshd_config
     sudo sed -re 's/^(\#?)(PermitRootLogin)([[:space:]]+)(.*)/PermitRootLogin no/' -i /etc/ssh/sshd_config
+    sudo sed -re 's/^(\#?)(X11Forwarding)([[:space:]]+)(.*)/X11Forwarding no/' -i /etc/ssh/sshd_config
+    sudo sed -re 's/^(\#?)(PermitEmptyPasswords)([[:space:]]+)(.*)/PermitEmptyPasswords no/' -i /etc/ssh/sshd_config
+    sudo echo 'AllowTcpForwarding no' >> /etc/ssh/sshd_config
+    sudo echo 'AllowUsers "${username}"' >> /etc/ssh/sshd_config
 }
 
 # Setup the Uncomplicated Firewall
@@ -144,4 +150,23 @@ function disableSudoPassword() {
 function revertSudoers() {
     sudo cp /etc/sudoers.bak /etc/sudoers
     sudo rm -rf /etc/sudoers.bak
+}
+
+# Install presto in root directory and set default shell to zsh
+function installPresto () {
+    # Install presto
+    cd /root
+    git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+    zsh
+    setopt EXTENDED_GLOB
+    for rcfile in .zprezto/runcoms/^README.md(.N); do
+        ln -s "$rcfile" ".${rcfile:t}"
+    done
+    chsh -s /bin/zsh
+}
+# Copy zsh config files to /etc/skel and update default shell
+function updateSkel() {
+    cd /root
+    cp -R .z* /etc/skel
+    sudo sed -i 's/DSHELL=\/bin\/bash/DSHELL=\/usr\/bin\/zsh/' /etc/adduser.conf
 }

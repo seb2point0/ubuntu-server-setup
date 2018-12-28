@@ -17,7 +17,21 @@ current_dir=$(getCurrentDir)
 includeDependencies
 output_file="output.log"
 
+# Set packages to install (seperate with spaces)
+install_packages="zsh"
+
+function pre() {
+
+    # Install packages
+    sudo apt-get update
+    sudo apt install -y "${install_packages}"
+
+    installPresto
+    updateSkel
+}
+
 function main() {
+
     read -rp "Enter the username of the new user account:" username
 
     promptForPassword
@@ -34,7 +48,7 @@ function main() {
     exec 3>&1 >>"${output_file}" 2>&1
     disableSudoPassword "${username}"
     addSSHKey "${username}" "${sshKey}"
-    changeSSHConfig
+    changeSSHConfig "${username}"
     setupUfw
 
     if ! hasSwap; then
@@ -51,6 +65,11 @@ function main() {
     cleanup
 
     echo "Setup Done! Log file is located at ${output_file}" >&3
+}
+
+post() {
+
+
 }
 
 function setupSwap() {
@@ -106,4 +125,6 @@ function promptForPassword() {
    done 
 }
 
+pre
 main
+post
