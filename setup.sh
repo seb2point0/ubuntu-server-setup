@@ -18,13 +18,15 @@ includeDependencies
 output_file="output.log"
 
 # Set packages to install (seperate with spaces)
-install_packages="zsh"
+required_packages="zsh"
 
 function pre() {
 
     # Install packages
     sudo apt-get update
-    sudo apt install -y "${install_packages}"
+
+    read -rp "Please specify packages to be installed (ex: 'package1 package2'). Leave blank for none:" install_packages
+    sudo apt install -y "${required_packages} ${install_packages}"
 
     installPresto
     updateSkel
@@ -96,10 +98,10 @@ function logTimestamp() {
 }
 
 function setupTimezone() {
-    echo -ne "Enter the timezone for the server (Default is 'Asia/Singapore'):\n" >&3
+    echo -ne "Enter the timezone for the server (Default is 'Europe/Paris'):\n" >&3
     read -r timezone
     if [ -z "${timezone}" ]; then
-        timezone="Asia/Singapore"
+        timezone="Europe/Paris"
     fi
     setTimezone "${timezone}"
     echo "Timezone is set to $(cat /etc/timezone)" >&3
