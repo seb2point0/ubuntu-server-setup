@@ -67,11 +67,6 @@ function main() {
     echo "Setup Done! Log file is located at ${output_file}" >&3
 }
 
-post() {
-
-
-}
-
 function setupSwap() {
     createSwap
     mountSwap
@@ -127,4 +122,3 @@ function promptForPassword() {
 
 pre
 main
-post
