@@ -25,16 +25,16 @@ function pre() {
     # Install packages
     sudo apt-get update
 
-    read -rp "Please specify packages to be installed (ex: 'package1 package2'). Leave blank for none:" install_packages
+    read -rp "Please specify packages to be installed (ex: 'package1 package2'). Leave blank for none:\n" install_packages
     sudo apt install -y "${required_packages}" "${install_packages}"
 
     installPresto
     updateSkel
 }
-
+s
 function main() {
 
-    read -rp "Enter the username of the new user account:" username
+    read -rp "Enter the username of the new user account:\n" username
 
     promptForPassword
 
