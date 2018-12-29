@@ -31,7 +31,7 @@ function pre() {
     installPresto
     updateSkel
 }
-s
+
 function main() {
 
     read -rp "Enter the username of the new user account:\n" username
