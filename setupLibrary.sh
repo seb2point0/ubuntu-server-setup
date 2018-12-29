@@ -59,7 +59,7 @@ function changeSSHConfig() {
     sudo sed -re 's/^(\#?)(X11Forwarding)([[:space:]]+)(.*)/X11Forwarding no/' -i /etc/ssh/sshd_config
     sudo sed -re 's/^(\#?)(PermitEmptyPasswords)([[:space:]]+)(.*)/PermitEmptyPasswords no/' -i /etc/ssh/sshd_config
     sudo echo 'AllowTcpForwarding no' >> /etc/ssh/sshd_config
-    sudo echo 'AllowUsers "${username}"' >> /etc/ssh/sshd_config
+    sudo echo "AllowUsers ${username}" >> /etc/ssh/sshd_config
 }
 
 # Setup the Uncomplicated Firewall
