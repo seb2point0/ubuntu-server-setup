@@ -22,12 +22,16 @@ required_packages="zsh"
 
 function pre() {
 
-    # Install packages
-    sudo apt-get update
+    echo "Updating packages... " >&3
+    sudo apt-get -y update
+
+    echo "Upgrading packages... " >&3
+    sudo apt-get -y upgrade
 
     read -rp $'Please specify packages to be installed (ex: package1 package2). Leave blank for none:\n' install_packages
     sudo apt install -y "${required_packages}" "${install_packages}"
 
+    echo "Updating shell environment... " >&3
     installPresto
     updateSkel
 }
@@ -53,7 +57,7 @@ function main() {
     disableSudoPassword "${username}"
     addSSHKey "${username}" "${sshKey}"
     changeSSHConfig "${username}" "${sshPort}"
-    setupUfw
+    setupUfw "${sshPort}"
 
     if ! hasSwap; then
         setupSwap

@@ -64,7 +64,9 @@ function changeSSHConfig() {
 
 # Setup the Uncomplicated Firewall
 function setupUfw() {
-    sudo ufw allow OpenSSH
+    local sshPort=${1}
+
+    sudo ufw allow "${sshPort}" comment "OpenSSH with custom port"
     yes y | sudo ufw enable
 }
 
