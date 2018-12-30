@@ -28,8 +28,10 @@ function pre() {
     echo "Upgrading packages... " >&3
     sudo apt-get -y upgrade
 
-    read -rp $'Please specify packages to be installed (ex: package1 package2). Leave blank for none:\n' install_packages
-    sudo apt install -y "${required_packages}" "${install_packages}"
+    echo "Installing required packages... " >&3
+    sudo apt install -y "${required_packages}"
+
+    installAdditionalPackages
 
     echo "Updating shell environment... " >&3
     installPresto
@@ -38,22 +40,44 @@ function pre() {
 
 function main() {
 
+    echo "************************************"
+    echo "* New user setup                   *"
+    echo "************************************"
+    printf "\n"
     read -rp $'Enter the username of the new user account:\n' username
+    read -rp $'Paste in the public SSH key for the new user:\n' sshKey
 
     promptForPassword
 
-    # Run setup functions
-    trap cleanup EXIT SIGHUP SIGINT SIGTERM
+    addUserAccount "${username}" "${password}" true
 
-    addUserAccount "${username}" "${password}"
+    clear
 
-    read -rp $'Paste in the public SSH key for the new user:\n' sshKey
+    echo "************************************"
+    echo "* SSH hardening                    *"
+    echo "************************************"
+    printf "\n"
     read -rp $'Enter the port for the SSH server (Default is 22):\n' sshPort
+
+    clear 
+
+    echo "************************************"
+    echo "* Default shell environment        *"
+    echo "************************************"
+    printf "\n"
+    zshPreztoAsShell
 
     echo 'Running setup script...'
     logTimestamp "${output_file}"
 
     exec 3>&1 >>"${output_file}" 2>&1
+
+    echo "Installing required packages... " >&3
+    
+    echo "Installing additional packages... " >&3
+    installAdditionalPackages
+
+
     disableSudoPassword "${username}"
     addSSHKey "${username}" "${sshKey}"
     changeSSHConfig "${username}" "${sshPort}"
@@ -111,6 +135,16 @@ function setupTimezone() {
     echo "Timezone is set to $(cat /etc/timezone)" >&3
 }
 
+function installRerquiredPackages() {
+    sudo apt install -y "${required_packages}"
+}
+
+function installAdditionalPackages() {
+    echo -ne "Enter packages to install (ex: package1 package2):\n" >&3
+    read -r packages
+    sudo apt install -y "${packages}"
+}
+
 # Keep prompting for the password and password confirmation
 function promptForPassword() {
    PASSWORDS_MATCH=0
@@ -126,6 +160,17 @@ function promptForPassword() {
            PASSWORDS_MATCH=1
        fi
    done 
+}
+
+function zshPreztoAsShell() {
+    while true; do
+        read -p "Do want to use ZSH and Prezto as default shell environment for all users?" yn
+        case $yn in
+            [Yy]* ) zshPrezto=true; break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done    
 }
 
 pre
