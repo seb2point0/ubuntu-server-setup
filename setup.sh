@@ -28,8 +28,6 @@ function main() {
 
     promptForPassword
 
-    addUserAccount "${username}" "${password}" true
-
     clear
 
     echo "************************************"
@@ -62,6 +60,9 @@ function main() {
 
     echo "Updating shell environment... " >&3
     updateSkel
+
+    echo "Adding new user... " >&3
+    addUserAccount "${username}" "${password}" true
 
     echo "Hardening SSH... " >&3
     disableSudoPassword "${username}"
@@ -102,6 +103,8 @@ function cleanup() {
     if [[ -f "/etc/sudoers.bak" ]]; then
         revertSudoers
     fi
+    execAsUser root "rm -rf /root/.ssh/authorized_keys"
+
 }
 
 function logTimestamp() {
