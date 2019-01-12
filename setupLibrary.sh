@@ -159,8 +159,11 @@ function revertSudoers() {
     sudo rm -rf /etc/sudoers.bak
 }
 
-# Install presto in root directory and set default shell to zsh
-function installPresto () {
+# Install zsh and presto in root directory and set default shell to zsh
+function installZshPrezto () {
+    # Install zsh
+    sudo apt install -y zsh
+
     # Install presto
     cd /root
     git clone --recursive https://github.com/sorin-ionescu/prezto.git "$HOME/.zprezto"
@@ -170,6 +173,7 @@ function installPresto () {
     ln -s .zprezto/runcoms/zprofile "$HOME/.zprofile"
     ln -s .zprezto/runcoms/zshenv "$HOME/.zshenv"
     ln -s .zprezto/runcoms/zshrc "$HOME/.zshrc"
+    # Change default shell to zsh
     chsh -s /bin/zsh
 }
 # Copy zsh config files to /etc/skel and update default shell

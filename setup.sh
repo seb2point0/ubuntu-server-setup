@@ -17,27 +17,6 @@ current_dir=$(getCurrentDir)
 includeDependencies
 output_file="output.log"
 
-# Set packages to install (seperate with spaces)
-required_packages="zsh"
-
-function pre() {
-
-    echo "Updating packages... " >&3
-    sudo apt-get -y update
-
-    echo "Upgrading packages... " >&3
-    sudo apt-get -y upgrade
-
-    echo "Installing required packages... " >&3
-    sudo apt install -y "${required_packages}"
-
-    installAdditionalPackages
-
-    echo "Updating shell environment... " >&3
-    installPresto
-    updateSkel
-}
-
 function main() {
 
     echo "************************************"
@@ -61,26 +40,35 @@ function main() {
 
     clear 
 
-    echo "************************************"
-    echo "* Default shell environment        *"
-    echo "************************************"
-    printf "\n"
-    zshPreztoAsShell
+    # echo "************************************"
+    # echo "* Default shell environment        *"
+    # echo "************************************"
+    # printf "\n"
+    # zshPreztoAsShell
 
     echo 'Running setup script...'
     logTimestamp "${output_file}"
 
     exec 3>&1 >>"${output_file}" 2>&1
 
-    echo "Installing required packages... " >&3
-    
-    echo "Installing additional packages... " >&3
-    installAdditionalPackages
+    echo "Updating packages... " >&3
+    sudo apt-get -y update
 
+    echo "Upgrading packages... " >&3
+    sudo apt-get -y upgrade
 
+    echo "Installing ZSH and Prezto ... " >&3
+    installZshPrezto
+
+    echo "Updating shell environment... " >&3
+    updateSkel
+
+    echo "Hardening SSH... " >&3
     disableSudoPassword "${username}"
     addSSHKey "${username}" "${sshKey}"
     changeSSHConfig "${username}" "${sshPort}"
+
+    echo "Setting up UFW... " >&3
     setupUfw "${sshPort}"
 
     if ! hasSwap; then
@@ -133,16 +121,6 @@ function setupTimezone() {
     fi
     setTimezone "${timezone}"
     echo "Timezone is set to $(cat /etc/timezone)" >&3
-}
-
-function installRerquiredPackages() {
-    sudo apt install -y "${required_packages}"
-}
-
-function installAdditionalPackages() {
-    echo -ne "Enter packages to install (ex: package1 package2):\n" >&3
-    read -r packages
-    sudo apt install -y "${packages}"
 }
 
 # Keep prompting for the password and password confirmation
