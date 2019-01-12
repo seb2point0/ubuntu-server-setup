@@ -151,5 +151,4 @@ function zshPreztoAsShell() {
     done    
 }
 
-pre
 main
