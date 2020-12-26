@@ -36,7 +36,7 @@ function main() {
     printf "\n"
     read -rp $'Enter the port for the SSH server (Default is 22):\n' sshPort
 
-    clear 
+    clear
 
     # echo "************************************"
     # echo "* Default shell environment        *"
@@ -104,13 +104,12 @@ function cleanup() {
         revertSudoers
     fi
     execAsUser root "rm -rf /root/.ssh/authorized_keys"
-
 }
 
 function logTimestamp() {
     local filename=${1}
     {
-        echo "===================" 
+        echo "==================="
         echo "Log generated on $(date)"
         echo "==================="
     } >>"${filename}" 2>&1
@@ -128,30 +127,33 @@ function setupTimezone() {
 
 # Keep prompting for the password and password confirmation
 function promptForPassword() {
-   PASSWORDS_MATCH=0
-   while [ "${PASSWORDS_MATCH}" -eq "0" ]; do
-       read -s -rp "Enter new UNIX password:" password
-       printf "\n"
-       read -s -rp "Retype new UNIX password:" password_confirmation
-       printf "\n"
+    PASSWORDS_MATCH=0
+    while [ "${PASSWORDS_MATCH}" -eq "0" ]; do
+        read -s -rp "Enter new UNIX password:" password
+        printf "\n"
+        read -s -rp "Retype new UNIX password:" password_confirmation
+        printf "\n"
 
-       if [[ "${password}" != "${password_confirmation}" ]]; then
-           echo "Passwords do not match! Please try again."
-       else
-           PASSWORDS_MATCH=1
-       fi
-   done 
+        if [[ "${password}" != "${password_confirmation}" ]]; then
+            echo "Passwords do not match! Please try again."
+        else
+            PASSWORDS_MATCH=1
+        fi
+    done
 }
 
 function zshPreztoAsShell() {
     while true; do
         read -p "Do want to use ZSH and Prezto as default shell environment for all users?" yn
         case $yn in
-            [Yy]* ) zshPrezto=true; break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes or no.";;
+        [Yy]*)
+            zshPrezto=true
+            break
+            ;;
+        [Nn]*) exit ;;
+        *) echo "Please answer yes or no." ;;
         esac
-    done    
+    done
 }
 
 main

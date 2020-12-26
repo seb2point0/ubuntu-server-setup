@@ -58,8 +58,8 @@ function changeSSHConfig() {
     sudo sed -re 's/^(\#?)(PermitRootLogin)([[:space:]]+)(.*)/PermitRootLogin no/' -i /etc/ssh/sshd_config
     sudo sed -re 's/^(\#?)(X11Forwarding)([[:space:]]+)(.*)/X11Forwarding no/' -i /etc/ssh/sshd_config
     sudo sed -re 's/^(\#?)(PermitEmptyPasswords)([[:space:]]+)(.*)/PermitEmptyPasswords no/' -i /etc/ssh/sshd_config
-    sudo echo 'AllowTcpForwarding no' >> /etc/ssh/sshd_config
-    sudo echo "AllowUsers ${username}" >> /etc/ssh/sshd_config
+    sudo echo 'AllowTcpForwarding no' >>/etc/ssh/sshd_config
+    sudo echo "AllowUsers ${username}" >>/etc/ssh/sshd_config
 }
 
 # Setup the Uncomplicated Firewall
@@ -72,17 +72,17 @@ function setupUfw() {
 
 # Create the swap file based on amount of physical memory on machine (Maximum size of swap is 4GB)
 function createSwap() {
-   local swapmem=$(($(getPhysicalMemory) * 2))
+    local swapmem=$(($(getPhysicalMemory) * 2))
 
-   # Anything over 4GB in swap is probably unnecessary as a RAM fallback
-   if [ ${swapmem} -gt 4 ]; then
+    # Anything over 4GB in swap is probably unnecessary as a RAM fallback
+    if [ ${swapmem} -gt 4 ]; then
         swapmem=4
-   fi
+    fi
 
-   sudo fallocate -l "${swapmem}G" /swapfile
-   sudo chmod 600 /swapfile
-   sudo mkswap /swapfile
-   sudo swapon /swapfile
+    sudo fallocate -l "${swapmem}G" /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
 }
 
 # Mount the swapfile
@@ -140,8 +140,8 @@ function configureNTP() {
 # Gets the amount of physical memory in GB (rounded up) installed on the machine
 function getPhysicalMemory() {
     local phymem
-    phymem="$(free -g|awk '/^Mem:/{print $2}')"
-    
+    phymem="$(free -g | awk '/^Mem:/{print $2}')"
+
     if [[ ${phymem} == '0' ]]; then
         echo 1
     else
@@ -166,7 +166,7 @@ function revertSudoers() {
 }
 
 # Install zsh and presto in root directory and set default shell to zsh
-function installZshPrezto () {
+function installZshPrezto() {
     # Install zsh
     sudo apt install -y zsh
 
