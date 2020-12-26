@@ -66,7 +66,7 @@ function changeSSHConfig() {
 function setupUfw() {
     local sshPort=${1}
 
-    sudo ufw allow "${sshPort}" comment "OpenSSH with custom port"
+    sudo ufw allow "${sshPort}" comment "OpenSSH"
     yes y | sudo ufw enable
 }
 
