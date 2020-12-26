@@ -51,7 +51,7 @@ function changeSSHConfig() {
     local sshPort=${2}
 
     if [ "${sshPort}" ]; then
-        sed -i "s/Port 22/Port $sshPort/" /etc/ssh/sshd_config
+        sudo sed -re 's/^(\#?)(Port)([[:space:]]+)(.*)/Port '"$sshPort"'/' -i /etc/ssh/sshd_config
     fi
 
     sudo sed -re 's/^(\#?)(PasswordAuthentication)([[:space:]]+)yes/\2\3no/' -i."$(echo 'old')" /etc/ssh/sshd_config
